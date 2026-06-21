@@ -392,23 +392,25 @@ export default function AuftraegePage() {
   }
 
   return (
-    <div className="space-y-5">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-rose-300/[0.16] via-white/[0.04] to-black/30 p-6 shadow-2xl shadow-black/40">
+    <main className="mx-auto min-h-dvh w-full max-w-md space-y-5 px-4 pt-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))]">
+      <section className="relative flex min-h-[330px] flex-col justify-between overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-rose-300/[0.16] via-white/[0.04] to-black/30 p-6 shadow-2xl shadow-black/40">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.24),transparent_35%)]" />
 
-        <div className="relative z-10">
-          <LiteLogo />
+        <div className="relative z-10 flex flex-1 flex-col justify-between gap-5">
+          <div>
+            <LiteLogo small />
 
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-white">
-            Objekte
-          </h1>
+            <h1 className="mt-4 text-4xl font-black tracking-tight text-white">
+              Objekte
+            </h1>
 
-          <p className="mt-2 text-sm font-medium leading-6 text-white/65">
-            Aufträge oder Objekte optional erfassen. Einsätze können auch ohne
-            Objekt gespeichert werden.
-          </p>
+            <p className="mt-2 text-sm font-medium leading-6 text-white/65">
+              Aufträge oder Objekte optional erfassen. Einsätze können auch ohne
+              Objekt gespeichert werden.
+            </p>
+          </div>
 
-          <div className="mt-5 grid grid-cols-3 gap-2 rounded-3xl border border-white/10 bg-black/25 p-2 text-center backdrop-blur-xl">
+          <div className="grid grid-cols-3 gap-2 rounded-3xl border border-white/10 bg-black/25 p-2 text-center backdrop-blur-xl">
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
               <p className="text-xl font-black text-rose-100">
                 {auftraege.length}
@@ -455,7 +457,7 @@ export default function AuftraegePage() {
         ) : (
           <div className="mt-5 space-y-3">
             <select
-              className="dark-input"
+              className="dark-input text-base"
               value={kundeId}
               onChange={(e) => setKundeId(e.target.value)}
             >
@@ -467,7 +469,7 @@ export default function AuftraegePage() {
             </select>
 
             <select
-              className="dark-input"
+              className="dark-input text-base"
               value={objektArt}
               onChange={(e) => setObjektArt(e.target.value)}
             >
@@ -480,7 +482,7 @@ export default function AuftraegePage() {
 
             {objektArt === "Eigene Eingabe" && (
               <input
-                className="dark-input"
+                className="dark-input text-base"
                 placeholder="Eigene Objektart, z.B. Praxis, Laden, Ferienwohnung"
                 value={eigeneObjektArt}
                 onChange={(e) => setEigeneObjektArt(e.target.value)}
@@ -488,7 +490,7 @@ export default function AuftraegePage() {
             )}
 
             <select
-              className="dark-input"
+              className="dark-input text-base"
               value={arbeitsArt}
               onChange={(e) => setArbeitsArt(e.target.value)}
             >
@@ -501,7 +503,7 @@ export default function AuftraegePage() {
 
             {arbeitsArt === "Eigene Eingabe" && (
               <input
-                className="dark-input"
+                className="dark-input text-base"
                 placeholder="Eigene Art, z.B. Stall, Praxisreinigung"
                 value={eigeneArbeitsArt}
                 onChange={(e) => setEigeneArbeitsArt(e.target.value)}
@@ -509,14 +511,14 @@ export default function AuftraegePage() {
             )}
 
             <input
-              className="dark-input"
+              className="dark-input text-base"
               placeholder="Ort optional"
               value={ort}
               onChange={(e) => setOrt(e.target.value)}
             />
 
             <textarea
-              className="dark-input min-h-24 resize-none"
+              className="dark-input min-h-24 resize-none text-base"
               placeholder="Beschreibung optional"
               value={beschreibung}
               onChange={(e) => setBeschreibung(e.target.value)}
@@ -525,7 +527,7 @@ export default function AuftraegePage() {
             <button
               onClick={speichern}
               disabled={speichernLoading}
-              className="w-full rounded-3xl bg-gradient-to-r from-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40 active:scale-[0.99] disabled:opacity-50"
+              className="w-full rounded-3xl bg-gradient-to-r from-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40 disabled:opacity-50"
             >
               {speichernLoading
                 ? "Speichern..."
@@ -537,7 +539,7 @@ export default function AuftraegePage() {
             {bearbeitenId && (
               <button
                 onClick={formularLeeren}
-                className="w-full rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white/70 active:scale-[0.99]"
+                className="w-full rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white/70"
               >
                 Abbrechen
               </button>
@@ -587,6 +589,6 @@ export default function AuftraegePage() {
           </div>
         </section>
       )}
-    </div>
+    </main>
   );
 }

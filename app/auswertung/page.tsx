@@ -427,12 +427,12 @@ export default function AuswertungPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-rose-300/[0.16] via-white/[0.04] to-black/30 p-6 shadow-2xl shadow-black/40">
+    <main className="mx-auto min-h-dvh w-full max-w-md space-y-5 px-4 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]">
+      <section className="relative flex min-h-[330px] flex-col justify-between overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-rose-300/[0.16] via-white/[0.04] to-black/30 p-6 shadow-2xl shadow-black/40">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.24),transparent_35%)]" />
 
         <div className="relative z-10">
-          <LiteLogo />
+          <LiteLogo small />
 
           <h1 className="mt-4 text-4xl font-black tracking-tight text-white">
             Abrechnung
@@ -444,7 +444,7 @@ export default function AuswertungPage() {
           </p>
 
           <div className="mt-5 grid grid-cols-3 gap-2 rounded-3xl border border-white/10 bg-black/25 p-2 text-center backdrop-blur-xl">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+            <div className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
               <p className="text-xl font-black text-rose-100">
                 {kundenMitEinsatz.length}
               </p>
@@ -453,7 +453,7 @@ export default function AuswertungPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+            <div className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
               <p className="text-xl font-black text-white">
                 {monatsEinsaetze.length}
               </p>
@@ -462,7 +462,7 @@ export default function AuswertungPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+            <div className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
               <p className="text-xl font-black text-white">
                 {monatsStunden.toFixed(1)}
               </p>
@@ -488,7 +488,7 @@ export default function AuswertungPage() {
         ) : (
           <div className="mt-5 space-y-3">
             <select
-              className="dark-input"
+              className="dark-input text-base"
               value={kundeId}
               onChange={(e) => setKundeId(e.target.value)}
             >
@@ -500,7 +500,7 @@ export default function AuswertungPage() {
             </select>
 
             <input
-              className="dark-input"
+              className="dark-input text-base"
               type="month"
               value={monat}
               onChange={(e) => setMonat(e.target.value)}
@@ -516,7 +516,7 @@ export default function AuswertungPage() {
               </p>
 
               <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+                <div className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
                   <p className="text-lg font-black text-rose-100">
                     {kundenEinsaetze.length}
                   </p>
@@ -525,7 +525,7 @@ export default function AuswertungPage() {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+                <div className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
                   <p className="text-lg font-black text-white">
                     {totalStunden.toFixed(1)}
                   </p>
@@ -534,7 +534,7 @@ export default function AuswertungPage() {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+                <div className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
                   <p className="text-lg font-black text-white">
                     {totalBetrag.toFixed(0)}
                   </p>
@@ -561,7 +561,7 @@ export default function AuswertungPage() {
 
             <button
               onClick={pdfErstellen}
-              className="w-full rounded-3xl bg-gradient-to-r from-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40 active:scale-[0.99]"
+              className="w-full rounded-3xl bg-gradient-to-r from-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40"
             >
               Monatszeit-Abrechnung herunterladen
             </button>
@@ -638,6 +638,6 @@ export default function AuswertungPage() {
           )}
         </div>
       </section>
-    </div>
+    </main>
   );
 }

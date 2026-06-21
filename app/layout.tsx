@@ -1,24 +1,43 @@
-import type { Metadata } from "next";
-import type { ReactNode } from "react";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import LiteNav from "../components/LiteNav";
 import AuthGuard from "../components/AuthGuard";
+import LiteNav from "../components/LiteNav";
 
 export const metadata: Metadata = {
   title: "ODZ. Lite",
-  description: "Einfache Einsatz- und Monatszeit-Abrechnung.",
+  description: "Einfache Zeiterfassung und Monatszeit-Abrechnung.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "ODZ. Lite",
+  },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="de">
-      <body className="bg-slate-950 text-white">
-        <AuthGuard>
-          <main className="mx-auto min-h-screen max-w-md px-4 pb-28 pt-5">
-            {children}
-          </main>
+export const viewport: Viewport = {
+  themeColor: "#020617",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+};
 
-          <LiteNav />
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="de" className="bg-slate-950">
+      <body className="min-h-dvh overflow-x-hidden bg-slate-950 text-white antialiased">
+        <AuthGuard>
+          <div className="min-h-dvh bg-[radial-gradient(circle_at_top,rgba(251,113,133,0.16),transparent_34%),linear-gradient(180deg,#020617_0%,#0f172a_45%,#020617_100%)]">
+            <main className="mx-auto min-h-dvh w-full max-w-md px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))]">
+              {children}
+            </main>
+
+            <LiteNav />
+          </div>
         </AuthGuard>
       </body>
     </html>

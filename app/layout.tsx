@@ -29,10 +29,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de" className="bg-slate-950">
-      <body className="min-h-dvh overflow-x-hidden bg-slate-950 text-white antialiased">
+      <body className="min-h-svh overflow-x-hidden overscroll-none bg-slate-950 text-white antialiased">
         <AuthGuard>
-          <div className="min-h-dvh bg-[radial-gradient(circle_at_top,rgba(251,113,133,0.16),transparent_34%),linear-gradient(180deg,#020617_0%,#0f172a_45%,#020617_100%)]">
-            <main className="mx-auto min-h-dvh w-full max-w-md px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))]">
+          <div className="relative min-h-svh overflow-x-hidden bg-[radial-gradient(circle_at_top,rgba(251,113,133,0.16),transparent_34%),linear-gradient(180deg,#020617_0%,#0f172a_45%,#020617_100%)]">
+            <main className="mx-auto min-h-svh w-full max-w-md px-4 pb-[calc(9rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))]">
               {children}
             </main>
 

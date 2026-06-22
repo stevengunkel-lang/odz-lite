@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import LiteLogo from "../../components/LiteLogo";
 
@@ -72,6 +72,20 @@ export default function ProfilPage() {
 
     setLoading(false);
   }
+
+  const profilName = useMemo(() => {
+    return firma.trim() || name.trim() || "Nicht eingerichtet";
+  }, [firma, name]);
+
+  const ausgefuellteFelder = useMemo(() => {
+    return [name, firma, adresse, email, telefon].filter(
+      (eintrag) => eintrag.trim().length > 0
+    ).length;
+  }, [name, firma, adresse, email, telefon]);
+
+  const istBereitFuerPdf = useMemo(() => {
+    return Boolean((firma || name).trim() && (adresse || email || telefon).trim());
+  }, [firma, name, adresse, email, telefon]);
 
   async function speichern() {
     setMeldung("");
@@ -229,75 +243,135 @@ export default function ProfilPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-rose-300/[0.16] via-white/[0.04] to-black/30 p-6 shadow-2xl shadow-black/40">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.24),transparent_35%)]" />
+    <div className="space-y-4 pb-4">
+      <section className="relative mx-auto flex min-h-[292px] w-[calc(100%-0.35rem)] flex-col justify-between overflow-hidden rounded-[2rem] border border-rose-200/20 bg-gradient-to-br from-rose-300/[0.22] via-white/[0.055] to-slate-950/72 p-5 shadow-2xl shadow-black/45">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.34),transparent_38%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(244,114,182,0.20),transparent_42%)]" />
+        <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-rose-200/40 to-transparent" />
 
         <div className="relative z-10">
-          <LiteLogo />
+          <LiteLogo small />
 
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-white">
+          <h1 className="mt-4 text-[2.15rem] font-black leading-none tracking-tight text-white">
             Profil
           </h1>
 
-          <p className="mt-2 text-sm font-medium leading-6 text-white/65">
-            Angaben für die Monatszeit-Abrechnung und dein ODZ. Lite Konto.
+          <p className="mt-3 max-w-xs text-[13px] font-semibold leading-6 text-white/65">
+            Absenderdaten für die Monatszeit-Abrechnung und dein ODZ. Lite Konto.
           </p>
+        </div>
 
-          <div className="mt-5 rounded-3xl border border-white/10 bg-black/25 p-4 backdrop-blur-xl">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-white/45">
-              Abrechnung von
+        <div className="relative z-10 mt-5 grid grid-cols-4 gap-1.5 rounded-[1.7rem] border border-white/10 bg-black/32 p-1.5 text-center shadow-inner shadow-black/30 backdrop-blur-xl">
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-rose-100 tabular-nums">
+              {profilId ? "1" : "0"}
             </p>
-
-            <p className="mt-1 text-2xl font-black text-rose-100">
-              {firma || name || "Noch nicht eingerichtet"}
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              Profil
             </p>
+          </div>
 
-            <p className="mt-1 text-sm text-white/50">
-              Wird automatisch auf der PDF angezeigt.
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-white tabular-nums">
+              {ausgefuellteFelder}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              Felder
+            </p>
+          </div>
+
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-white tabular-nums">
+              {istBereitFuerPdf ? "Ja" : "Nein"}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              PDF
+            </p>
+          </div>
+
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-white tabular-nums">
+              Live
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              Cloud
             </p>
           </div>
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
+          Abrechnung von
+        </p>
+
+        <h2 className="mt-1 text-2xl font-black">{profilName}</h2>
+
+        <p className="mt-3 text-sm leading-6 text-white/55">
+          Diese Angaben erscheinen später automatisch auf der Monatszeit-Abrechnung.
+        </p>
+
+        <div className="mt-4 rounded-3xl border border-white/10 bg-black/25 p-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-white/45">
+            Aktueller Absender
+          </p>
+
+          <p className="mt-2 text-lg font-black text-rose-100">
+            {firma || name || "Noch nicht eingerichtet"}
+          </p>
+
+          <p className="mt-2 text-sm leading-6 text-white/50">
+            {adresse || "Adresse fehlt noch"}
+            <br />
+            {email || "E-Mail fehlt noch"}
+            <br />
+            {telefon || "Telefon fehlt noch"}
+          </p>
+        </div>
+      </section>
+
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Einstellungen
         </p>
 
         <h2 className="mt-1 text-2xl font-black">Absender einrichten</h2>
 
+        <p className="mt-1 text-sm text-white/55">
+          Name oder Geschäftsname genügt. Rest kann später ergänzt werden.
+        </p>
+
         <div className="mt-5 space-y-3">
           <input
-            className="dark-input"
+            className="dark-input text-base"
             placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
 
           <input
-            className="dark-input"
+            className="dark-input text-base"
             placeholder="Firma / Geschäftsname optional"
             value={firma}
             onChange={(e) => setFirma(e.target.value)}
           />
 
           <input
-            className="dark-input"
+            className="dark-input text-base"
             placeholder="Adresse optional"
             value={adresse}
             onChange={(e) => setAdresse(e.target.value)}
           />
 
           <input
-            className="dark-input"
+            className="dark-input text-base"
             placeholder="E-Mail optional"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
-            className="dark-input"
+            className="dark-input text-base"
             placeholder="Telefon optional"
             value={telefon}
             onChange={(e) => setTelefon(e.target.value)}
@@ -306,7 +380,7 @@ export default function ProfilPage() {
           <button
             onClick={speichern}
             disabled={speichernLoading}
-            className="w-full rounded-3xl bg-gradient-to-r from-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40 active:scale-[0.99] disabled:opacity-50"
+            className="w-full rounded-3xl border border-rose-100/30 bg-gradient-to-r from-rose-200 via-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40 disabled:opacity-50"
           >
             {speichernLoading ? "Speichern..." : "Profil speichern"}
           </button>
@@ -319,7 +393,7 @@ export default function ProfilPage() {
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Konto
         </p>
@@ -332,13 +406,13 @@ export default function ProfilPage() {
 
         <button
           onClick={logout}
-          className="mt-5 w-full rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white/70 active:scale-[0.99]"
+          className="mt-5 w-full rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white/70"
         >
           Logout
         </button>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Daten
         </p>
@@ -353,21 +427,21 @@ export default function ProfilPage() {
         <div className="mt-5 space-y-3">
           <button
             onClick={cloudDatenLoeschen}
-            className="w-full rounded-3xl border border-yellow-300/20 bg-yellow-300/10 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-yellow-100 active:scale-[0.99]"
+            className="w-full rounded-3xl border border-yellow-300/20 bg-yellow-300/10 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-yellow-100"
           >
             Testdaten löschen
           </button>
 
           <button
             onClick={allesLoeschen}
-            className="w-full rounded-3xl border border-red-300/20 bg-red-300/10 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-red-100 active:scale-[0.99]"
+            className="w-full rounded-3xl border border-red-300/20 bg-red-300/10 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-red-100"
           >
             Alles löschen
           </button>
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Speicherung
         </p>
@@ -375,9 +449,8 @@ export default function ProfilPage() {
         <h2 className="mt-1 text-2xl font-black">Aktueller Stand</h2>
 
         <p className="mt-3 text-sm leading-6 text-white/55">
-          Dein Profil wird jetzt mit Supabase gespeichert. Als nächstes stellen
-          wir Kunden, Objekte, Einsätze, Termine und Abrechnung vollständig auf
-          Supabase um.
+          ODZ. Lite speichert Profil, Kunden, Objekte, Einsätze, Termine und
+          Abrechnung live in Supabase.
         </p>
       </section>
     </div>

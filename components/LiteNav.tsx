@@ -22,6 +22,14 @@ export default function LiteNav() {
     return pathname.startsWith(href);
   }
 
+  function seiteWechseln() {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "auto",
+    });
+  }
+
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-50 h-[9rem] px-4">
       <div className="absolute inset-x-0 bottom-0 h-full bg-[linear-gradient(to_top,#020617_0%,rgba(2,6,23,0.98)_28%,rgba(2,6,23,0.78)_56%,rgba(2,6,23,0.32)_80%,transparent_100%)]" />
@@ -37,6 +45,8 @@ export default function LiteNav() {
               <Link
                 key={item.href}
                 href={item.href}
+                scroll={true}
+                onClick={seiteWechseln}
                 aria-current={aktiv ? "page" : undefined}
                 className={[
                   "flex h-[3.35rem] min-w-0 select-none items-center justify-center rounded-[1.45rem] border px-1 text-[8.5px] font-black uppercase leading-none tracking-[0.08em] outline-none",

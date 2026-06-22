@@ -574,63 +574,65 @@ export default function Home() {
   }
 
   return (
-    <div className="space-y-5">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-rose-300/[0.16] via-white/[0.04] to-black/30 p-6 shadow-2xl shadow-black/40">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.24),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(236,72,153,0.18),transparent_35%)]" />
+    <div className="space-y-5 pb-3">
+      <section className="relative flex min-h-[330px] flex-col justify-between overflow-hidden rounded-[2rem] border border-rose-200/20 bg-gradient-to-br from-rose-300/[0.20] via-white/[0.05] to-slate-950/70 p-6 shadow-2xl shadow-black/40">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.30),transparent_38%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(244,114,182,0.18),transparent_42%)]" />
+        <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-rose-200/40 to-transparent" />
 
         <div className="relative z-10">
-          <LiteLogo />
+          <LiteLogo small />
 
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-white">
+          <h1 className="mt-5 text-4xl font-black tracking-tight text-white">
             Heute
           </h1>
 
-          <p className="mt-2 text-sm font-medium leading-6 text-white/65">
+          <p className="mt-3 max-w-xs text-sm font-semibold leading-6 text-white/65">
             Termine sehen, Zeit erfassen und Monatszeit-Abrechnung automatisch
             vorbereiten.
           </p>
+        </div>
 
-          <div className="mt-5 grid grid-cols-4 gap-2 rounded-3xl border border-white/10 bg-black/25 p-2 text-center backdrop-blur-xl">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-xl font-black text-rose-100">
-                {heuteTermine.length}
-              </p>
-              <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
-                Termine
-              </p>
-            </div>
+        <div className="relative z-10 mt-6 grid grid-cols-4 gap-2 rounded-3xl border border-white/10 bg-black/30 p-2 text-center shadow-inner shadow-black/30 backdrop-blur-xl">
+          <div className="flex h-[78px] flex-col items-center justify-center rounded-2xl border border-rose-200/10 bg-white/[0.055] px-2">
+            <p className="text-xl font-black leading-none text-rose-100 tabular-nums">
+              {heuteTermine.length}
+            </p>
+            <p className="mt-2 text-[9px] font-black uppercase tracking-[0.14em] text-white/45">
+              Termine
+            </p>
+          </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-xl font-black text-white">
-                {heuteEinsaetze.length}
-              </p>
-              <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
-                Arbeit
-              </p>
-            </div>
+          <div className="flex h-[78px] flex-col items-center justify-center rounded-2xl border border-rose-200/10 bg-white/[0.055] px-2">
+            <p className="text-xl font-black leading-none text-white tabular-nums">
+              {heuteEinsaetze.length}
+            </p>
+            <p className="mt-2 text-[9px] font-black uppercase tracking-[0.14em] text-white/45">
+              Arbeit
+            </p>
+          </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-xl font-black text-white">
-                {stunden.toFixed(1)}
-              </p>
-              <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
-                Aktuell
-              </p>
-            </div>
+          <div className="flex h-[78px] flex-col items-center justify-center rounded-2xl border border-rose-200/10 bg-white/[0.055] px-2">
+            <p className="text-xl font-black leading-none text-white tabular-nums">
+              {stunden.toFixed(1)}
+            </p>
+            <p className="mt-2 text-[9px] font-black uppercase tracking-[0.14em] text-white/45">
+              Aktuell
+            </p>
+          </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-xl font-black text-white">
-                {monatsStunden.toFixed(1)}
-              </p>
-              <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
-                Monat
-              </p>
-            </div>
+          <div className="flex h-[78px] flex-col items-center justify-center rounded-2xl border border-rose-200/10 bg-white/[0.055] px-2">
+            <p className="text-xl font-black leading-none text-white tabular-nums">
+              {monatsStunden.toFixed(1)}
+            </p>
+            <p className="mt-2 text-[9px] font-black uppercase tracking-[0.14em] text-white/45">
+              Monat
+            </p>
           </div>
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[2rem] border border-rose-200/10 bg-white/[0.055] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Woche
         </p>
@@ -648,10 +650,10 @@ export default function Home() {
               onClick={() => setAusgewaehlterTag(tag.iso)}
               className={
                 tag.iso === ausgewaehlterTag
-                  ? "rounded-2xl border border-pink-300/40 bg-pink-300/20 p-2 text-center active:scale-[0.98]"
+                  ? "min-h-[96px] rounded-2xl border border-rose-200/40 bg-gradient-to-br from-rose-300/25 to-pink-400/10 p-2 text-center shadow-[0_0_22px_rgba(251,113,133,0.20)] transition-colors duration-200"
                   : tag.istHeute
-                  ? "rounded-2xl border border-rose-300/30 bg-rose-300/15 p-2 text-center active:scale-[0.98]"
-                  : "rounded-2xl border border-white/10 bg-black/20 p-2 text-center active:scale-[0.98]"
+                  ? "min-h-[96px] rounded-2xl border border-rose-300/30 bg-rose-300/20 p-2 text-center shadow-[0_0_18px_rgba(251,113,133,0.13)] transition-colors duration-200"
+                  : "min-h-[96px] rounded-2xl border border-white/10 bg-black/25 p-2 text-center transition-colors duration-200"
               }
             >
               <p className="text-[10px] font-black uppercase tracking-widest text-white/45">
@@ -764,7 +766,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[2rem] border border-rose-200/10 bg-white/[0.055] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           {bearbeitenId ? "Einsatz bearbeiten" : "Einsatz erfassen"}
         </p>
@@ -784,7 +786,7 @@ export default function Home() {
         ) : (
           <div className="mt-5 space-y-3">
             <select
-              className="dark-input"
+              className="dark-input text-base"
               value={kundeId}
               onChange={(e) => setKundeId(e.target.value)}
             >
@@ -796,7 +798,7 @@ export default function Home() {
             </select>
 
             <select
-              className="dark-input"
+              className="dark-input text-base"
               value={auftragId}
               onChange={(e) => setAuftragId(e.target.value)}
             >
@@ -811,7 +813,7 @@ export default function Home() {
             </select>
 
             <input
-              className="dark-input"
+              className="dark-input text-base"
               type="date"
               value={datum}
               onChange={(e) => setDatum(e.target.value)}
@@ -823,7 +825,7 @@ export default function Home() {
                   Von
                 </label>
                 <input
-                  className="dark-input"
+                  className="dark-input text-base"
                   type="time"
                   value={von}
                   onChange={(e) => setVon(e.target.value)}
@@ -835,7 +837,7 @@ export default function Home() {
                   Bis
                 </label>
                 <input
-                  className="dark-input"
+                  className="dark-input text-base"
                   type="time"
                   value={bis}
                   onChange={(e) => setBis(e.target.value)}
@@ -844,7 +846,7 @@ export default function Home() {
             </div>
 
             <input
-              className="dark-input"
+              className="dark-input text-base"
               inputMode="decimal"
               placeholder="Pause optional, z.B. 0.5"
               value={pause}
@@ -852,7 +854,7 @@ export default function Home() {
             />
 
             <textarea
-              className="dark-input min-h-24 resize-none"
+              className="dark-input min-h-24 resize-none text-base"
               placeholder="Notiz optional"
               value={notiz}
               onChange={(e) => setNotiz(e.target.value)}
@@ -870,7 +872,7 @@ export default function Home() {
             <button
               onClick={speichern}
               disabled={speichernLoading}
-              className="w-full rounded-3xl bg-gradient-to-r from-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40 active:scale-[0.99] disabled:opacity-50"
+              className="w-full rounded-3xl border border-rose-100/30 bg-gradient-to-r from-rose-200 via-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40 disabled:opacity-50"
             >
               {speichernLoading
                 ? "Speichern..."
@@ -882,7 +884,7 @@ export default function Home() {
             {bearbeitenId && (
               <button
                 onClick={formularLeeren}
-                className="w-full rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white/70 active:scale-[0.99]"
+                className="w-full rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white/70"
               >
                 Abbrechen
               </button>
@@ -897,7 +899,7 @@ export default function Home() {
         )}
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[2rem] border border-rose-200/10 bg-white/[0.055] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Verlauf
         </p>
@@ -917,7 +919,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[2rem] border border-rose-200/10 bg-white/[0.055] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Monat
         </p>

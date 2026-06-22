@@ -225,6 +225,15 @@ export default function AuswertungPage() {
     [monatsEinsaetze]
   );
 
+  const monatsBetrag = useMemo(() => {
+    return monatsEinsaetze.reduce((summe, einsatz) => {
+      const kunde = kunden.find((eintrag) => eintrag.id === einsatz.kunde_id);
+      const satz = Number(kunde?.stundensatz || 0);
+
+      return summe + Number(einsatz.stunden || 0) * satz;
+    }, 0);
+  }, [kunden, monatsEinsaetze]);
+
   function auftragName(id?: string | null) {
     if (!id) return "Allgemein";
 
@@ -427,59 +436,73 @@ export default function AuswertungPage() {
   }
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-md space-y-5 px-4 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]">
-      <section className="relative flex min-h-[330px] flex-col justify-between overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-rose-300/[0.16] via-white/[0.04] to-black/30 p-6 shadow-2xl shadow-black/40">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.24),transparent_35%)]" />
+    <div className="space-y-4 pb-4">
+      <section className="relative mx-auto flex min-h-[292px] w-[calc(100%-0.35rem)] flex-col justify-between overflow-hidden rounded-[2rem] border border-rose-200/20 bg-gradient-to-br from-rose-300/[0.22] via-white/[0.055] to-slate-950/72 p-5 shadow-2xl shadow-black/45">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.34),transparent_38%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(244,114,182,0.20),transparent_42%)]" />
+        <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-rose-200/40 to-transparent" />
 
         <div className="relative z-10">
           <LiteLogo small />
 
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-white">
+          <h1 className="mt-4 text-[2.15rem] font-black leading-none tracking-tight text-white">
             Abrechnung
           </h1>
 
-          <p className="mt-2 text-sm font-medium leading-6 text-white/65">
-            Monatszeit-Abrechnung pro Kunde erstellen. Stunden und Betrag werden
-            automatisch berechnet.
+          <p className="mt-3 max-w-xs text-[13px] font-semibold leading-6 text-white/65">
+            Monatszeit-Abrechnung pro Kunde erstellen und als PDF herunterladen.
           </p>
+        </div>
 
-          <div className="mt-5 grid grid-cols-3 gap-2 rounded-3xl border border-white/10 bg-black/25 p-2 text-center backdrop-blur-xl">
-            <div className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-xl font-black text-rose-100">
-                {kundenMitEinsatz.length}
-              </p>
-              <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
-                Kunden
-              </p>
-            </div>
+        <div className="relative z-10 mt-5 grid grid-cols-4 gap-1.5 rounded-[1.7rem] border border-white/10 bg-black/32 p-1.5 text-center shadow-inner shadow-black/30 backdrop-blur-xl">
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-rose-100 tabular-nums">
+              {kundenMitEinsatz.length}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              Kunden
+            </p>
+          </div>
 
-            <div className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-xl font-black text-white">
-                {monatsEinsaetze.length}
-              </p>
-              <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
-                Einsätze
-              </p>
-            </div>
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-white tabular-nums">
+              {monatsEinsaetze.length}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              Einsätze
+            </p>
+          </div>
 
-            <div className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-xl font-black text-white">
-                {monatsStunden.toFixed(1)}
-              </p>
-              <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/45">
-                Stunden
-              </p>
-            </div>
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-white tabular-nums">
+              {monatsStunden.toFixed(1)}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              Stunden
+            </p>
+          </div>
+
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-white tabular-nums">
+              {monatsBetrag.toFixed(0)}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              CHF
+            </p>
           </div>
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Monatszeit-Abrechnung
         </p>
 
         <h2 className="mt-1 text-2xl font-black">PDF erstellen</h2>
+
+        <p className="mt-1 text-sm text-white/55">
+          Kunde und Monat wählen. Die App berechnet Stunden und Betrag automatisch.
+        </p>
 
         {kunden.length === 0 ? (
           <div className="mt-5 rounded-3xl border border-yellow-300/20 bg-yellow-300/10 p-4 text-sm font-bold text-yellow-100">
@@ -561,7 +584,7 @@ export default function AuswertungPage() {
 
             <button
               onClick={pdfErstellen}
-              className="w-full rounded-3xl bg-gradient-to-r from-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40"
+              className="w-full rounded-3xl border border-rose-100/30 bg-gradient-to-r from-rose-200 via-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40"
             >
               Monatszeit-Abrechnung herunterladen
             </button>
@@ -575,7 +598,7 @@ export default function AuswertungPage() {
         )}
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Übersicht
         </p>
@@ -638,6 +661,6 @@ export default function AuswertungPage() {
           )}
         </div>
       </section>
-    </main>
+    </div>
   );
 }

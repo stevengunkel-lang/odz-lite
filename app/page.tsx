@@ -124,6 +124,13 @@ function tagNummer(datum: Date) {
   });
 }
 
+function tagMonatKurz(datum: Date) {
+  return datum.toLocaleDateString("de-CH", {
+    day: "2-digit",
+    month: "2-digit",
+  });
+}
+
 export default function Home() {
   const [userId, setUserId] = useState("");
   const [kunden, setKunden] = useState<Kunde[]>([]);
@@ -143,6 +150,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [speichernLoading, setSpeichernLoading] = useState(false);
   const [bearbeitenId, setBearbeitenId] = useState<string | null>(null);
+  const [wochenStart, setWochenStart] = useState(startDerWoche());
   const [ausgewaehlterTag, setAusgewaehlterTag] = useState(heuteISO());
 
   useEffect(() => {
@@ -273,18 +281,8 @@ export default function Home() {
     [termine]
   );
 
-  const letzteEinsaetze = useMemo(() => {
-    return [...einsaetze]
-      .sort((a, b) => {
-        const datumVergleich = b.datum.localeCompare(a.datum);
-        if (datumVergleich !== 0) return datumVergleich;
-        return b.von.localeCompare(a.von);
-      })
-      .slice(0, 10);
-  }, [einsaetze]);
-
   const wochenTage = useMemo(() => {
-    const montag = startDerWoche();
+    const montag = new Date(wochenStart);
 
     return Array.from({ length: 7 }).map((_, index) => {
       const tag = new Date(montag);
@@ -317,7 +315,31 @@ export default function Home() {
         istHeute: iso === heuteISO(),
       };
     });
-  }, [einsaetze, termine]);
+  }, [einsaetze, termine, wochenStart]);
+
+  const wochenLabel = useMemo(() => {
+    const start = new Date(wochenStart);
+    const ende = new Date(wochenStart);
+    ende.setDate(start.getDate() + 6);
+
+    return `${tagMonatKurz(start)} – ${tagMonatKurz(ende)}`;
+  }, [wochenStart]);
+
+  function wocheWechseln(richtung: -1 | 1) {
+    const neuerStart = new Date(wochenStart);
+    neuerStart.setDate(neuerStart.getDate() + richtung * 7);
+    neuerStart.setHours(12, 0, 0, 0);
+
+    setWochenStart(neuerStart);
+    setAusgewaehlterTag(datumISO(neuerStart));
+  }
+
+  function aktuelleWocheOeffnen() {
+    const start = startDerWoche();
+
+    setWochenStart(start);
+    setAusgewaehlterTag(heuteISO());
+  }
 
   const tagDetails = useMemo(() => {
     const tag = wochenTage.find((eintrag) => eintrag.iso === ausgewaehlterTag);
@@ -637,13 +659,51 @@ export default function Home() {
           Woche
         </p>
 
-        <h2 className="mt-1 text-2xl font-black">Kalender</h2>
+        <div className="mt-1 flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-black">Kalender</h2>
 
-        <p className="mt-1 text-sm text-white/55">
-          Tag antippen und Tagesansicht direkt öffnen.
-        </p>
+            <p className="mt-1 text-sm text-white/55">
+              Woche wechseln, Tag antippen und Tagesansicht öffnen.
+            </p>
+          </div>
 
-        <div className="mt-4 grid grid-cols-7 gap-2">
+          <div className="rounded-2xl border border-rose-200/15 bg-black/25 px-3 py-2 text-right">
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-white/40">
+              Zeitraum
+            </p>
+            <p className="mt-1 text-xs font-black text-rose-100">
+              {wochenLabel}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-[3.35rem_1fr_3.35rem] gap-2">
+          <button
+            onClick={() => wocheWechseln(-1)}
+            className="h-12 rounded-2xl border border-white/10 bg-black/25 text-xl font-black text-rose-100 shadow-inner shadow-black/20"
+            aria-label="Vorherige Woche"
+          >
+            ‹
+          </button>
+
+          <button
+            onClick={aktuelleWocheOeffnen}
+            className="h-12 rounded-2xl border border-rose-200/20 bg-rose-300/10 text-[10px] font-black uppercase tracking-[0.16em] text-rose-100"
+          >
+            Diese Woche
+          </button>
+
+          <button
+            onClick={() => wocheWechseln(1)}
+            className="h-12 rounded-2xl border border-white/10 bg-black/25 text-xl font-black text-rose-100 shadow-inner shadow-black/20"
+            aria-label="Nächste Woche"
+          >
+            ›
+          </button>
+        </div>
+
+        <div className="mt-3 grid grid-cols-7 gap-2">
           {wochenTage.map((tag) => (
             <button
               key={tag.iso}
@@ -897,26 +957,6 @@ export default function Home() {
             {meldung}
           </div>
         )}
-      </section>
-
-      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
-        <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
-          Verlauf
-        </p>
-
-        <h2 className="mt-1 text-2xl font-black">Letzte Einsätze</h2>
-
-        <div className="mt-4 space-y-3">
-          {letzteEinsaetze.length === 0 ? (
-            <div className="rounded-3xl border border-white/10 bg-black/20 p-4 text-sm text-white/55">
-              Noch keine Einsätze gespeichert.
-            </div>
-          ) : (
-            letzteEinsaetze.map((eintrag) => (
-              <EinsatzKarte key={eintrag.id} eintrag={eintrag} />
-            ))
-          )}
-        </div>
       </section>
 
       <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">

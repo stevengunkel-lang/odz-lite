@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import LiteLogo from "../../components/LiteLogo";
 
@@ -62,6 +62,27 @@ export default function KundenPage() {
 
     setKunden((data || []) as Kunde[]);
   }
+
+  const kundenMitSatz = useMemo(
+    () => kunden.filter((kunde) => Number(kunde.stundensatz || 0) > 0),
+    [kunden]
+  );
+
+  const kundenOhneSatz = useMemo(
+    () => kunden.filter((kunde) => !kunde.stundensatz),
+    [kunden]
+  );
+
+  const durchschnittSatz = useMemo(() => {
+    if (kundenMitSatz.length === 0) return 0;
+
+    const total = kundenMitSatz.reduce(
+      (summe, kunde) => summe + Number(kunde.stundensatz || 0),
+      0
+    );
+
+    return Math.round(total / kundenMitSatz.length);
+  }, [kundenMitSatz]);
 
   function formularLeeren() {
     setName("");
@@ -183,45 +204,65 @@ export default function KundenPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-rose-300/[0.16] via-white/[0.04] to-black/30 p-6 shadow-2xl shadow-black/40">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.24),transparent_35%)]" />
+    <div className="space-y-4 pb-4">
+      <section className="relative mx-auto flex min-h-[292px] w-[calc(100%-0.35rem)] flex-col justify-between overflow-hidden rounded-[2rem] border border-rose-200/20 bg-gradient-to-br from-rose-300/[0.22] via-white/[0.055] to-slate-950/72 p-5 shadow-2xl shadow-black/45">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,113,133,0.34),transparent_38%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(244,114,182,0.20),transparent_42%)]" />
+        <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-rose-200/40 to-transparent" />
 
         <div className="relative z-10">
-          <LiteLogo />
+          <LiteLogo small />
 
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-white">
+          <h1 className="mt-4 text-[2.15rem] font-black leading-none tracking-tight text-white">
             Kunden
           </h1>
 
-          <p className="mt-2 text-sm font-medium leading-6 text-white/65">
-            Kunden speichern und den passenden Stundensatz hinterlegen. Die
-            Abrechnung rechnet später automatisch.
+          <p className="mt-3 max-w-xs text-[13px] font-semibold leading-6 text-white/65">
+            Kunden speichern, Stundensatz hinterlegen und die Abrechnung später
+            automatisch vorbereiten.
           </p>
+        </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-2 rounded-3xl border border-white/10 bg-black/25 p-2 text-center backdrop-blur-xl">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-2xl font-black text-rose-100">
-                {kunden.length}
-              </p>
-              <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
-                Kunden
-              </p>
-            </div>
+        <div className="relative z-10 mt-5 grid grid-cols-4 gap-1.5 rounded-[1.7rem] border border-white/10 bg-black/32 p-1.5 text-center shadow-inner shadow-black/30 backdrop-blur-xl">
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-rose-100 tabular-nums">
+              {kunden.length}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              Kunden
+            </p>
+          </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-2xl font-black text-white">
-                {kunden.filter((kunde) => kunde.stundensatz).length}
-              </p>
-              <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
-                mit Satz
-              </p>
-            </div>
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-white tabular-nums">
+              {kundenMitSatz.length}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              mit Satz
+            </p>
+          </div>
+
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-white tabular-nums">
+              {kundenOhneSatz.length}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              offen
+            </p>
+          </div>
+
+          <div className="flex h-[62px] flex-col items-center justify-center rounded-[1.25rem] border border-rose-200/10 bg-white/[0.055] px-1">
+            <p className="text-lg font-black leading-none text-white tabular-nums">
+              {durchschnittSatz}
+            </p>
+            <p className="mt-1.5 text-[8px] font-black uppercase tracking-[0.14em] text-white/45">
+              Ø CHF
+            </p>
           </div>
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           {bearbeitenId ? "Kunde bearbeiten" : "Neuer Kunde"}
         </p>
@@ -230,16 +271,20 @@ export default function KundenPage() {
           {bearbeitenId ? "Kunde ändern" : "Kunde anlegen"}
         </h2>
 
+        <p className="mt-1 text-sm text-white/55">
+          Name genügt. Adresse, Kontakt und Stundensatz sind optional.
+        </p>
+
         <div className="mt-5 space-y-3">
           <input
-            className="dark-input"
+            className="dark-input text-base"
             placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
 
           <input
-            className="dark-input"
+            className="dark-input text-base"
             inputMode="decimal"
             placeholder="Stundensatz CHF/h optional, z.B. 35"
             value={stundensatz}
@@ -247,21 +292,21 @@ export default function KundenPage() {
           />
 
           <input
-            className="dark-input"
+            className="dark-input text-base"
             placeholder="Adresse optional"
             value={adresse}
             onChange={(e) => setAdresse(e.target.value)}
           />
 
           <input
-            className="dark-input"
+            className="dark-input text-base"
             placeholder="E-Mail optional"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
-            className="dark-input"
+            className="dark-input text-base"
             placeholder="Telefon optional"
             value={telefon}
             onChange={(e) => setTelefon(e.target.value)}
@@ -270,7 +315,7 @@ export default function KundenPage() {
           <button
             onClick={speichern}
             disabled={speichernLoading}
-            className="w-full rounded-3xl bg-gradient-to-r from-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40 active:scale-[0.99] disabled:opacity-50"
+            className="w-full rounded-3xl border border-rose-100/30 bg-gradient-to-r from-rose-200 via-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40 disabled:opacity-50"
           >
             {speichernLoading
               ? "Speichern..."
@@ -282,7 +327,7 @@ export default function KundenPage() {
           {bearbeitenId && (
             <button
               onClick={formularLeeren}
-              className="w-full rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white/70 active:scale-[0.99]"
+              className="w-full rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-white/70"
             >
               Abbrechen
             </button>
@@ -296,7 +341,7 @@ export default function KundenPage() {
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30">
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
           Übersicht
         </p>

@@ -23,9 +23,14 @@ export default function LiteNav() {
   }
 
   return (
-    <nav className="fixed bottom-[calc(env(safe-area-inset-bottom)+1.15rem)] left-0 right-0 z-50 px-3">
-      <div className="mx-auto w-full max-w-[25.2rem] overflow-hidden rounded-[2rem] border border-rose-200/18 bg-slate-950/90 p-2 shadow-2xl shadow-black/50 backdrop-blur-2xl">
-        <div className="grid h-[3.35rem] grid-cols-6 gap-1 text-center">
+    <nav className="pointer-events-none fixed bottom-0 left-0 right-0 z-50 px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+      <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-slate-950 via-slate-950/78 to-transparent" />
+
+      <div className="pointer-events-auto relative mx-auto w-[calc(100%-0.35rem)] max-w-[26rem] overflow-hidden rounded-[2rem] border border-rose-200/18 bg-slate-950/88 p-2 shadow-2xl shadow-black/55 backdrop-blur-2xl">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(251,113,133,0.16),transparent_42%)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.055] via-transparent to-black/20" />
+
+        <div className="relative grid h-[3.35rem] grid-cols-6 gap-1 text-center">
           {navItems.map((item) => {
             const aktiv = istAktiv(item.href);
 

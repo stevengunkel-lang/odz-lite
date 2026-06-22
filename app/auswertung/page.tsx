@@ -252,19 +252,15 @@ export default function AuswertungPage() {
     return auftraege.find((auftrag) => auftrag.id === id)?.art || "Reinigung";
   }
 
-  function pdfErstellen() {
-    setMeldung("");
+  function saubererDateiname(text: string) {
+    return text
+      .trim()
+      .replaceAll(" ", "_")
+      .replace(/[^\wäöüÄÖÜß.-]/g, "-")
+      .replace(/-+/g, "-");
+  }
 
-    if (!ausgewaehlterKunde) {
-      setMeldung("Bitte Kunde auswählen.");
-      return;
-    }
-
-    if (kundenEinsaetze.length === 0) {
-      setMeldung("Für diesen Kunden und Monat gibt es keine Einsätze.");
-      return;
-    }
-
+  function pdfDokumentErstellen() {
     const doc = new jsPDF();
 
     doc.setFillColor(15, 23, 42);
@@ -306,10 +302,10 @@ export default function AuswertungPage() {
     doc.setFontSize(9);
 
     const empfaenger = [
-      ausgewaehlterKunde.name,
-      ausgewaehlterKunde.adresse || "",
-      ausgewaehlterKunde.email || "",
-      ausgewaehlterKunde.telefon || "",
+      ausgewaehlterKunde?.name || "",
+      ausgewaehlterKunde?.adresse || "",
+      ausgewaehlterKunde?.email || "",
+      ausgewaehlterKunde?.telefon || "",
     ].filter(Boolean);
 
     empfaenger.forEach((zeile, index) => {
@@ -412,11 +408,71 @@ export default function AuswertungPage() {
       doc.text(`Seite ${index} / ${pageCount}`, 178, 291);
     }
 
-    const dateiname = `Monatszeit-Abrechnung_${ausgewaehlterKunde.name}_${monat}.pdf`
-      .replaceAll(" ", "_")
-      .replaceAll("/", "-");
+    return doc;
+  }
 
-    doc.save(dateiname);
+  function dateinameErstellen() {
+    const kundenName = saubererDateiname(ausgewaehlterKunde?.name || "Kunde");
+    return `Monatszeit-Abrechnung_${kundenName}_${monat}.pdf`;
+  }
+
+  async function pdfErstellen() {
+    setMeldung("");
+
+    if (!ausgewaehlterKunde) {
+      setMeldung("Bitte Kunde auswählen.");
+      return;
+    }
+
+    if (kundenEinsaetze.length === 0) {
+      setMeldung("Für diesen Kunden und Monat gibt es keine Einsätze.");
+      return;
+    }
+
+    try {
+      const doc = pdfDokumentErstellen();
+      const dateiname = dateinameErstellen();
+      const pdfBlob = doc.output("blob");
+
+      const pdfFile = new File([pdfBlob], dateiname, {
+        type: "application/pdf",
+        lastModified: Date.now(),
+      });
+
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.share &&
+        navigator.canShare?.({ files: [pdfFile] })
+      ) {
+        await navigator.share({
+          title: "Monatszeit-Abrechnung",
+          text: `${ausgewaehlterKunde.name} · ${monatLabel(monat)}`,
+          files: [pdfFile],
+        });
+
+        setMeldung("PDF wurde zum Teilen vorbereitet.");
+        return;
+      }
+
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = dateiname;
+      link.rel = "noopener";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 1000);
+
+      setMeldung("PDF wurde heruntergeladen.");
+    } catch (error) {
+      console.error(error);
+      setMeldung("PDF konnte nicht erstellt werden. Bitte erneut versuchen.");
+    }
   }
 
   if (false && loading) {
@@ -586,7 +642,7 @@ export default function AuswertungPage() {
               onClick={pdfErstellen}
               className="w-full rounded-3xl border border-rose-100/30 bg-gradient-to-r from-rose-200 via-rose-300 to-pink-400 px-5 py-4 text-sm font-black uppercase tracking-[0.18em] text-slate-950 shadow-2xl shadow-rose-950/40"
             >
-              Monatszeit-Abrechnung herunterladen
+              PDF teilen / herunterladen
             </button>
 
             {meldung && (

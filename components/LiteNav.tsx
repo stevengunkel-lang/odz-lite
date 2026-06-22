@@ -24,7 +24,7 @@ export default function LiteNav() {
 
   return (
     <nav className="pointer-events-none fixed bottom-0 left-0 right-0 z-50 px-4 pb-[calc(env(safe-area-inset-bottom)+0.8rem)]">
-      <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-slate-950 via-slate-950/82 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-[linear-gradient(to_top,#020617_0%,rgba(2,6,23,0.96)_34%,rgba(2,6,23,0.72)_62%,rgba(2,6,23,0.28)_82%,transparent_100%)]" />
 
       <div className="pointer-events-auto relative mx-auto w-[calc(100%-0.35rem)] max-w-[26rem] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/94 p-2 shadow-2xl shadow-black/55 backdrop-blur-2xl">
         <div className="absolute inset-0 bg-gradient-to-br from-rose-300/[0.075] via-white/[0.025] to-black/20" />

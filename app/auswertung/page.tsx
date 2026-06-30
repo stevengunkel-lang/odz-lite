@@ -234,6 +234,56 @@ export default function AuswertungPage() {
     }, 0);
   }, [kunden, monatsEinsaetze]);
 
+  const gesamtStunden = useMemo(() => {
+    return einsaetze.reduce(
+      (summe, einsatz) => summe + Number(einsatz.stunden || 0),
+      0
+    );
+  }, [einsaetze]);
+
+  const gesamtBetrag = useMemo(() => {
+    return einsaetze.reduce((summe, einsatz) => {
+      const kunde = kunden.find((eintrag) => eintrag.id === einsatz.kunde_id);
+      const satz = Number(kunde?.stundensatz || 0);
+
+      return summe + Number(einsatz.stunden || 0) * satz;
+    }, 0);
+  }, [kunden, einsaetze]);
+
+  const gesamtKunden = useMemo(() => {
+    return new Set(einsaetze.map((einsatz) => einsatz.kunde_id)).size;
+  }, [einsaetze]);
+
+  const durchschnittProStunde = useMemo(() => {
+    if (gesamtStunden <= 0) return 0;
+    return gesamtBetrag / gesamtStunden;
+  }, [gesamtBetrag, gesamtStunden]);
+
+  const gesamtNachKunde = useMemo(() => {
+    return kunden
+      .map((kunde) => {
+        const kundenAlleEinsaetze = einsaetze.filter(
+          (einsatz) => einsatz.kunde_id === kunde.id
+        );
+
+        const stunden = kundenAlleEinsaetze.reduce(
+          (summe, einsatz) => summe + Number(einsatz.stunden || 0),
+          0
+        );
+
+        const betrag = stunden * Number(kunde.stundensatz || 0);
+
+        return {
+          kunde,
+          einsaetze: kundenAlleEinsaetze.length,
+          stunden,
+          betrag,
+        };
+      })
+      .filter((eintrag) => eintrag.einsaetze > 0)
+      .sort((a, b) => b.betrag - a.betrag);
+  }, [kunden, einsaetze]);
+
   function auftragName(id?: string | null) {
     if (!id) return "Allgemein";
 
@@ -652,6 +702,109 @@ export default function AuswertungPage() {
             )}
           </div>
         )}
+      </section>
+
+      <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-200">
+          Gesamt-Auswertung
+        </p>
+
+        <h2 className="mt-1 text-2xl font-black">Alle Stunden & Gehalt</h2>
+
+        <p className="mt-1 text-sm text-white/55">
+          Gesamtübersicht über alle gespeicherten Einsätze und alle Kunden.
+        </p>
+
+        <div className="mt-5 grid grid-cols-2 gap-2 text-center">
+          <div className="rounded-[1.5rem] border border-rose-200/10 bg-black/25 p-4">
+            <p className="text-2xl font-black text-rose-100 tabular-nums">
+              {gesamtStunden.toFixed(2)}
+            </p>
+            <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/40">
+              Gesamtstunden
+            </p>
+          </div>
+
+          <div className="rounded-[1.5rem] border border-rose-200/10 bg-black/25 p-4">
+            <p className="text-2xl font-black text-white tabular-nums">
+              {gesamtBetrag.toFixed(2)}
+            </p>
+            <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/40">
+              Gesamt CHF
+            </p>
+          </div>
+
+          <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4">
+            <p className="text-xl font-black text-white tabular-nums">
+              {einsaetze.length}
+            </p>
+            <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/40">
+              Einsätze
+            </p>
+          </div>
+
+          <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4">
+            <p className="text-xl font-black text-white tabular-nums">
+              {gesamtKunden}
+            </p>
+            <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/40">
+              Kunden
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-3 rounded-3xl border border-white/10 bg-black/25 p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-white/40">
+                Ø pro Stunde
+              </p>
+              <p className="mt-1 text-sm font-semibold text-white/55">
+                Berechnet aus allen hinterlegten Stundensätzen.
+              </p>
+            </div>
+
+            <p className="text-xl font-black text-rose-100 tabular-nums">
+              {durchschnittProStunde.toFixed(2)} CHF/h
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-2">
+          {gesamtNachKunde.length === 0 ? (
+            <div className="rounded-3xl border border-white/10 bg-black/20 p-4 text-sm text-white/55">
+              Noch keine Einsätze für die Gesamt-Auswertung vorhanden.
+            </div>
+          ) : (
+            gesamtNachKunde.map((eintrag) => (
+              <div
+                key={eintrag.kunde.id}
+                className="rounded-3xl border border-white/10 bg-black/20 p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-base font-black text-white">
+                      {eintrag.kunde.name}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-white/45">
+                      {eintrag.einsaetze} Einsätze ·{' '}
+                      {Number(eintrag.kunde.stundensatz || 0).toFixed(2)} CHF/h
+                    </p>
+                  </div>
+
+                  <div className="text-right">
+                    <p className="text-sm font-black text-rose-100 tabular-nums">
+                      {eintrag.stunden.toFixed(2)} h
+                    </p>
+                    <p className="mt-1 text-xs font-black text-white/55 tabular-nums">
+                      {eintrag.betrag.toFixed(2)} CHF
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </section>
 
       <section className="rounded-[1.85rem] border border-rose-200/10 bg-white/[0.052] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
